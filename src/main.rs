@@ -74,16 +74,30 @@ fn main() {
             swap_str.red()
         };
 
-        println!("RAM Total: {:.2} GB", mem_total / gb_divisor);
+        // println!("RAM Total: {:.2} GB", mem_total / gb_divisor);
+        // println!(
+        //     "RAM Used: {:.2} GB ({})",
+        //     mem_used / gb_divisor,
+        //     colored_percent
+        // );
+        // // println!("(Debug) RAM Total (Raw):{}", mem_total);
+        // // println!("(Debug) RAM Avaliable (Raw):{}", mem_avaliable);
+        // println!(
+        //     "Swap used: {:.2} GB ({})",
+        //     swap_used / gb_divisor,
+        //     colored_swap
+        // );
+        // --- ส่วนที่จัดคอลัมน์ใหม่ ---
+        println!("{:<12} {:>6.2} GB", "RAM Total:", mem_total / gb_divisor);
         println!(
-            "RAM Used: {:.2} GB ({})",
+            "{:<12} {:>6.2} GB ({})",
+            "RAM Used:",
             mem_used / gb_divisor,
             colored_percent
         );
-        // println!("(Debug) RAM Total (Raw):{}", mem_total);
-        // println!("(Debug) RAM Avaliable (Raw):{}", mem_avaliable);
         println!(
-            "Swap used: {:.2} GB ({})",
+            "{:<12} {:>6.2} GB ({})",
+            "Swap Used:",
             swap_used / gb_divisor,
             colored_swap
         );
