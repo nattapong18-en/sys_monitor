@@ -1,3 +1,4 @@
+use colored::*;
 use std::fs;
 use std::thread;
 use std::time::Duration;
@@ -20,6 +21,8 @@ fn main() {
             }
         }
     }
+    // println!("นี่คือสีแดง: {}", "Danger!".red());
+    // println!("นี่คือสีเขียวหนาๆ: {}", "Safe!".green().bold());
 
     loop {
         let meminfo = fs::read_to_string("/proc/meminfo")
@@ -52,18 +55,37 @@ fn main() {
         let gb_divisor = 1024.0 * 1024.0;
         let swap_used = swap_total - swap_free;
         let swap_percent = (swap_used / swap_total) * 100.0;
+
+        let percent_str = format!("{:.1}%", percent_used);
+        let colored_percent = if percent_used < 60.0 {
+            percent_str.green()
+        } else if percent_used < 85.0 {
+            percent_str.yellow()
+        } else {
+            percent_str.red()
+        };
+
+        let swap_str = format!("{:.1}%", swap_percent);
+        let colored_swap = if swap_percent < 60.0 {
+            swap_str.green()
+        } else if swap_used < 85.0 {
+            swap_str.yellow()
+        } else {
+            swap_str.red()
+        };
+
         println!("RAM Total: {:.2} GB", mem_total / gb_divisor);
         println!(
-            "RAM Used: {:.2} GB ({:.1}%)",
+            "RAM Used: {:.2} GB ({})",
             mem_used / gb_divisor,
-            percent_used
+            colored_percent
         );
         // println!("(Debug) RAM Total (Raw):{}", mem_total);
         // println!("(Debug) RAM Avaliable (Raw):{}", mem_avaliable);
         println!(
-            "Swap used: {:.2} GB ({:.1}%)",
+            "Swap used: {:.2} GB ({})",
             swap_used / gb_divisor,
-            swap_percent
+            colored_swap
         );
 
         thread::sleep(Duration::from_secs(1));
