@@ -32,17 +32,17 @@ fn main() {
         println!("--- 🐧 {} | 💻 {} System Monitor ---", os_name, my_cpu_name);
 
         let mut mem_total: f64 = 0.0;
-        let mut mem_avaliable: f64 = 0.0;
+        let mut mem_available: f64 = 0.0;
         let mut swap_total: f64 = 0.0;
         let mut swap_free: f64 = 0.0;
 
         for line in meminfo.lines() {
             if line.starts_with("MemTotal:") {
                 mem_total = extract_kb(line);
-            } else if line.starts_with("MemAvaliable:")
-                || (line.starts_with("MemFree:") && mem_avaliable == 0.0)
+            } else if line.starts_with("MemAvailable:")
+                || (line.starts_with("MemFree:") && mem_available == 0.0)
             {
-                mem_avaliable = extract_kb(line);
+                mem_available = extract_kb(line);
             } else if line.starts_with("SwapTotal:") {
                 swap_total = extract_kb(line);
             } else if line.starts_with("SwapFree:") {
@@ -50,7 +50,7 @@ fn main() {
             }
         }
 
-        let mem_used = mem_total - mem_avaliable;
+        let mem_used = mem_total - mem_available;
         let percent_used = (mem_used / mem_total) * 100.0;
         let gb_divisor = 1024.0 * 1024.0;
         let swap_used = swap_total - swap_free;
@@ -68,7 +68,7 @@ fn main() {
         let swap_str = format!("{:.1}%", swap_percent);
         let colored_swap = if swap_percent < 60.0 {
             swap_str.green()
-        } else if swap_used < 85.0 {
+        } else if swap_percent < 85.0 {
             swap_str.yellow()
         } else {
             swap_str.red()
@@ -94,10 +94,8 @@ fn main() {
 fn extract_kb(line: &str) -> f64 {
     let parts: Vec<&str> = line.split_whitespace().collect();
 
-    if parts.len() >= 2
-        && let Ok(kb) = parts[1].parse::<f64>()
-    {
-        return kb;
-    }
-    0.0
+    parts.get(1)
+    .and_then(|s| s.parse::<f64>().ok())
+    .unwrap_or(0.0)
+    
 }
